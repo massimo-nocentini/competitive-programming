@@ -2,3 +2,5 @@
 .metadata/
 eclipse/
 */bin/
+
+*.swp
