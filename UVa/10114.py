@@ -11,9 +11,14 @@ with fileinput.input() as f:
         if duration < 0: 
             break
 
-        deprs = [-1] * duration 
-        last = -1 
-        for d in range(depr_nel):
+        buyer_owes = load
+        line = next(f).split(' ')
+        off_lot, off_lot_perc = int(line[0]), float(line[1])
+        car_value = (load + down_pay) * (1 - off_lot_perc)
+
+        deprs = [off_lot_perc] + ([0] * duration)
+        last = 0 
+        for d in range(depr_nel-1):
             line = next(f).split(' ')
             month, perc = int(line[0]), float(line[1])
             for i in range(last+1, month):
@@ -22,20 +27,17 @@ with fileinput.input() as f:
             last = month
         for i in range(last+1, len(deprs)):
             deprs[i]=deprs[last]
+        deprs[0] = off_lot_perc
 
-        print(deprs)
-        buyer_owes = load + down_pay
-        car_value = load + down_pay
-        for month in range(0, duration):
+        #print(deprs)
+        for month in range(1, len(deprs)):
             buyer_owes -= down_pay 
             car_value *= 1 - deprs[month]
             print('buyer: {} car: {}'.format(buyer_owes, car_value))
-            if buyer_owes < car_value:
-                print('1 month' if month == 1 else '{} months'.format(month))
+            if buyer_owes < car_value: 
                 break
-        else:
-            print('buyer: {} car: {}'.format(buyer_owes, car_value))
-             
+
+        print('{} month{}'.format(month, '' if month == 1 else 's'))
 
 
 
