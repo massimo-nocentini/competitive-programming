@@ -9,7 +9,9 @@ Directory is structured according online judges.
 ## Solved
 
    - [UVa 11547][UVa11547]: **Automatic Answer**
+
         - *trick*: apply `a // 10 % 10` to get digit in decine position
+
    - [UVa 11727][UVa11727]: **Cost Cutting**
    - [UVa 11498][UVa11498]: **Division of Nlogonia**
    - [UVa 11172][UVa11172]: **Relational Operator**
