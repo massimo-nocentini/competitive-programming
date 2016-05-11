@@ -12,7 +12,7 @@ the `libs` directory contains useful definitions to ease solving, such as [input
 
 ## Solved problems
 
-   -    [UVa 11942][UVa11942]: **Lumberjack Sequencing** ([code][UVa11942:code])
+   -    [UVa 11942][UVa11942]: **Lumberjack Sequencing** ([code][UVa11942:code])<br>
         *trick*: use Python condition concatenation `a < b < c < d < e < f < g < h < i < j` 
         for asc/des order checks
    -    [UVa 11559][UVa11559]: **Event Planning** ([code][UVa11559:code])
