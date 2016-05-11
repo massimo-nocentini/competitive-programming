@@ -8,8 +8,7 @@ Directory is structured according online judges.
 
 ## Solved
 
-   -    [UVa 11547][UVa11547]: **Automatic Answer**
-
+   -    [UVa 11547][UVa11547]: **Automatic Answer**<br>
         *trick*: apply `a // 10 % 10` to get digit in decine position
 
    -    [UVa 11727][UVa11727]: **Cost Cutting**
