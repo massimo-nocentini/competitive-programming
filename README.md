@@ -7,8 +7,8 @@ In this repo I put my programming training, mostly based on the [CP book][cpbook
 ## Python libs
 
 My plan is to use Python as the primary language to solve problems; for this reason,
-the `libs` directory contains useful definitions to ease solving, such as [input utils][libs:input],
-[sorting and ordering][libs:sorting].
+the [`python-libs`][python:libs] directory contains useful definitions to ease solving, 
+such as [input utils][libs:input], [sorting and ordering][libs:sorting].
 
 
 ## WIP problems
@@ -40,6 +40,7 @@ The following content grows as a stack, namely most recently solved on top:
 
 [UVa:judge]:https://uva.onlinejudge.org/index.php?option=com_frontpage&Itemid=1
 
+[python:libs]:https://github.com/massimo-nocentini/competitive-programming/tree/master/python-libs
 [libs:input]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/inpututils.py
 [libs:sorting]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/sorting.py
 
