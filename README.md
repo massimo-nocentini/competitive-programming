@@ -10,6 +10,12 @@ My plan is to use Python as the primary language to solve problems; for this rea
 the `libs` directory contains useful definitions to ease solving, such as [input utils][libs:input],
 [sorting and ordering][libs:sorting].
 
+
+## WIP problems
+
+   -    [UVa 10141][UVa10141]: **Request for Proposal**
+
+
 ## Solved problems
 
 The following content grows as a stack, namely most recently solved on top:
@@ -29,9 +35,6 @@ The following content grows as a stack, namely most recently solved on top:
    -    [UVa 11498][UVa11498]: **Division of Nlogonia** ([code][UVa11498:code])
    -    [UVa 11172][UVa11172]: **Relational Operator** ([code][UVa11172:code])
 
-## WIP problems
-
-   -    [UVa 10141][UVa10141]: **Request for Proposal**
           
 [cpbook]:http://cpbook.net/#CP3details
 
