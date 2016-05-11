@@ -12,6 +12,8 @@ the `libs` directory contains useful definitions to ease solving, such as [input
 
 ## Solved problems
 
+The following content grows as a stack, namely most recently solved on top:
+
    -    [UVa 11942][UVa11942]: **Lumberjack Sequencing** ([code][UVa11942:code])<br>
         *trick*: use Python condition concatenation `a < b < c < d < e < f < g < h < i < j` 
         for asc/des order checks
@@ -26,6 +28,10 @@ the `libs` directory contains useful definitions to ease solving, such as [input
    -    [UVa 11727][UVa11727]: **Cost Cutting** ([code][UVa11727:code])
    -    [UVa 11498][UVa11498]: **Division of Nlogonia** ([code][UVa11498:code])
    -    [UVa 11172][UVa11172]: **Relational Operator** ([code][UVa11172:code])
+
+## WIP problems
+
+   -    [UVa 10141][UVa10141]: **Request for Proposal**
           
 [cpbook]:http://cpbook.net/#CP3details
 
@@ -33,6 +39,8 @@ the `libs` directory contains useful definitions to ease solving, such as [input
 
 [libs:input]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/inpututils.py
 [libs:sorting]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/sorting.py
+
+[UVa10141]:https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=609&page=show_problem&problem=1082
 
 [UVa11942]:https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=3093
 [UVa11942:code]:https://github.com/massimo-nocentini/competitive-programming/blob/master/UVa/11942.py
