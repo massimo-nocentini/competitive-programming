@@ -34,7 +34,7 @@ The following content grows as a stack, namely most recently solved on top:
    -    [UVa 10114][UVa10114]: **Loansome Car Buyer** ([code][UVa10114:code])<br>
         *method*: one pass after filling vector 'piggyback', as time series for deprecation percentages
    -    [UVa 11547][UVa11547]: **Automatic Answer** ([code][UVa11547:code])<br>
-        *trick*: if `a` $\in\mathbb{N}$, apply `a // 10 % 10` to get digit in decine position
+        *trick*: if `a` $$\in\mathbb{N}$$, apply `a // 10 % 10` to get digit in decine position
    -    [UVa 11727][UVa11727]: **Cost Cutting** ([code][UVa11727:code])
    -    [UVa 11498][UVa11498]: **Division of Nlogonia** ([code][UVa11498:code])
    -    [UVa 11172][UVa11172]: **Relational Operator** ([code][UVa11172:code])
