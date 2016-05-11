@@ -11,8 +11,9 @@ def line_bind(line, *args, splitter=' '):
     yield (c(v) for c, v in zip(args, line.split(splitter)))
 
 @contextmanager
-def stdin_input():
-    yield fileinput.input()
+def stdin_input(raw_iter=True):
+    fi = fileinput.input()
+    yield fi if raw_iter else (lambda: next(fi))
 
 def forever_read_until_event(fn, event=StopIteration):
     with stdin_input() as f:
