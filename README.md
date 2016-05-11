@@ -1,7 +1,8 @@
 
 # Competitive Programming
 
-In this repo I put my programming training.
+In this repo I put my programming training, mostly based on the [CP book][cpbook], against 
+[UVa judge][UVa:judge].
 
 ## Python libs
 
@@ -26,6 +27,9 @@ the `libs` directory contains useful definitions to ease solving, such as [input
    -    [UVa 11498][UVa11498]: **Division of Nlogonia** ([code][UVa11498:code])
    -    [UVa 11172][UVa11172]: **Relational Operator** ([code][UVa11172:code])
           
+[cpbook]:http://cpbook.net/#CP3details
+
+[UVa:judge]:https://uva.onlinejudge.org/index.php?option=com_frontpage&Itemid=1
 
 [libs:input]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/inpututils.py
 [libs:sorting]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/sorting.py
