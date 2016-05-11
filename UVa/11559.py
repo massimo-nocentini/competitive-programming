@@ -1,5 +1,4 @@
 
-# https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=608&page=show_problem&problem=2595
 
 # ___declarations in `utilities.py`___
 # do update in `utilities.py` if you do any change
