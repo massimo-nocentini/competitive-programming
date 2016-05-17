@@ -1,6 +1,4 @@
 
-# ___declarations in `utilities.py`___
-# do update in `utilities.py` if you do any change
 #_________________________________________________________________________
 
 import fileinput
@@ -18,9 +16,6 @@ def line_bind(line, *ctors, splitter=lambda l: l.split(' '), do=None):
     if this holds, an iterable of mapped elements is produced, composed of elements
     built by application of each function in `ctors` to element in the split, pairwise.
     On the other hand, mapping happens according to the rules of `zip` if lengths differ.
-
-    Keyword argument `do` is an higher order operator, defaults to `None`: if
-    given, it should be a function that receive the generator, which is returned, otherwise.
 
     Moreover, the returned iterable object is a generator, so a linear scan of the line
     *is not* performed, hence there is no need to consume an higher order operator to
@@ -43,16 +38,27 @@ def stdin_input(getter=lambda: fileinput.input(), raw_iter=True):
     iterable = getter()
     yield iterable if raw_iter else (lambda: next(iterable))
 
-def forever_read_until_event(doer, reader=lambda: stdin_input(), event=StopIteration):
-    '''
-    Runs forever a `doer` function reading a source, until an event happens.
-
-    An iterable, provided by the `reader` thunk, is read infinitely until `event`
-    is raised. By defaults, `reader` reads from standard input and `event` is `StopIteration`.
-    '''
-    with reader() as f:
-        while True:
-            try: doer(f)
-            except event: break
-
 #________________________________________________________________________
+
+with stdin_input(raw_iter=False) as next_line:
+    with line_bind(next_line(), int) as (tests,):
+        for t in range(1, tests+1):
+            with    line_bind(next_line(), int) as (n,),\
+                    line_bind(next_line(), *([int] * n), do=list) as ps,\
+                    line_bind(next_line(), *([int] * n), do=list) as qs:
+                for i in range(n):
+                    gallons = 0
+                    for j in range(n):
+                        index = (i+j)%n
+                        gallons += ps[index]-qs[index] 
+                        if gallons < 0:
+                            break
+                    else:
+                        print("Case {}: Possible from station {}".format(t, i+1))
+                        break
+                else:
+                    print("Case {}: Not possible".format(t))
+
+
+
+
