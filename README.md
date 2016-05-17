@@ -27,7 +27,7 @@ such as [input utils][libs:input], [sorting and ordering][libs:sorting].
 
 The following content grows as a stack, namely most recently solved on top:
 
-   -    [UVa 101][UVa101]: **The Block Problem** ([code][UV101:code])<br>
+   -    [UVa 101][UVa101]: **The Block Problem** ([code][UVa101:code])<br>
         *trick*: a sort of *double dispatching* to implement an *automaton* of 
         commands; moreover, nice play with Python `list`s
    -    [UVa 11942][UVa11942]: **Lumberjack Sequencing** ([code][UVa11942:code])<br>
