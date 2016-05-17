@@ -27,6 +27,9 @@ such as [input utils][libs:input], [sorting and ordering][libs:sorting].
 
 The following content grows as a stack, namely most recently solved on top:
 
+   -    [UVa 101][UVa101]: **The Block Problem** ([code][UV101:code])<br>
+        *trick*: a sort of *double dispatching* to implement an *automaton* of 
+        commands; moreover, nice play with Python `list`s
    -    [UVa 11942][UVa11942]: **Lumberjack Sequencing** ([code][UVa11942:code])<br>
         *trick*: use Python condition concatenation `a < b < c < d < e < f < g < h < i < j` 
         for asc/des order checks
@@ -52,6 +55,9 @@ The following content grows as a stack, namely most recently solved on top:
 [libs:sorting]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/sorting.py
 
 [UVa10141]:https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=609&page=show_problem&problem=1082
+
+[UVa101]:https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=37
+[UVa101:code]:https://github.com/massimo-nocentini/competitive-programming/blob/master/UVa/101.py
 
 [UVa11093]:https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=2034
 [UVa11093:code]:https://github.com/massimo-nocentini/competitive-programming/blob/master/UVa/11093.py
