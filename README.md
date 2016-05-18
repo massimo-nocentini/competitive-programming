@@ -31,9 +31,11 @@ The following content grows as a stack, namely most recently solved on top:
    -    [UVa 11040][UVa11040]: **Add bricks in the wall** ([code][UVa11040:code])<br>
         *trick*: probably TLE if exaustive search is done via backtrack. Understand the problem, yields
         a recursive structure:
+        
         | | | $\hat{3}$ | | |
         | | $a_{2}$ | | $a_{3}$ | |
         |$\hat{3}$| | $a_{1}$ | |$\hat{1}$| 
+
         therefore, solving the system of equations respect $a_{1}$:
         $$
             a_{2}=\hat{2}+a_{1}\\
