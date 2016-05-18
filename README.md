@@ -21,7 +21,8 @@ such as [input utils][libs:input], [sorting and ordering][libs:sorting], [behavi
 
 ## RTE problems
 
-   -    [UVa 11093][UVa11093]: **Just Finish it up** ([code][UVa11093:code])
+   -    [UVa 11093][UVa11093]: **Just Finish it up** ([code][UVa11093:code])<br>
+        locally seems to work, although the judge cannot exec it
 
 ## Solved problems
 
