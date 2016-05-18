@@ -30,14 +30,20 @@ The following content grows as a stack, namely most recently solved on top:
 
    -    [UVa 11040][UVa11040]: **Add bricks in the wall** ([code][UVa11040:code])<br>
         *trick*: probably TLE if exaustive search is done via backtrack. The problem has
-        a recursive structure, solving the system of equations respect ζ:
+        a recursive structure, where α, β and γ are given integers:
+             
+              α    
+             δ ε
+            β ζ γ
+
+        Solving the system of equations respect to ζ:
 
             δ = β + ζ
-            a_{3}=a_{1}+\hat{1}\\
-            \hat{3}=a_{2}+a_{3}\\
+            ε = ζ + γ
+            α = δ + ε
 
-        yields $a_{1}=\frac{\hat{3}-\hat{2}-\hat{1}}{2}$. According to the problem rules, 
-        we use the former two equations in the system to fill both $a_{2}$ and $a_{3}$.
+        yields ζ = (α - β - γ)/2 . According to the problem rules, 
+        we use the former two equations in the system to fill both δ and ε.
         Observe that this holds within the *whole* triangle, therefore it is possible to
         build it during input scan, avoiding to fill it bottom-up.
    -    [UVa 101][UVa101]: **The Block Problem** ([code][UVa101:code])<br>
