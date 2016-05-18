@@ -39,6 +39,27 @@ def stdin_input(getter=lambda: fileinput.input(), raw_iter=True):
     iterable = getter()
     yield iterable if raw_iter else (lambda: next(iterable))
 
+def dispatch(*args, table, default=lambda k, e: k):
+    '''
+    Dispatch behavior in *even* positions within `args` against mapping `table`.
+
+    It accepts a variable list of arguments, however of even length, where
+    *hashable* objects in *even* positions are used in the key for dispatching against
+    logic container `table`, namely a mapping of functions; in parallel, objects
+    in *odd* positions within `args` are used as values, respectively.
+
+    Keyword argument `default` is a function that consumes two arguments:
+    the former is the key not found in the dispatch `table`; the latter one
+    is the caught exception, if re-raising would be performed. Its default
+    behavior is to return the key as it is.
+    '''
+    key = tuple([args[e] for e in range(0, len(args), 2)])
+    values = [args[o] for o in range(1, len(args), 2)]
+    try:
+        method = table[key]
+        return method(*values)
+    except KeyError as e:
+        return default(key, e)
 #________________________________________________________________________
 
 with stdin_input() as f:
@@ -48,7 +69,8 @@ with stdin_input() as f:
         stacks = [[i] for i in range(n)]
         positions = {i:(i,0) for i in range(n)}
 
-        def restore(arg):
+        def restore(*args):
+            for arg in args:
                 s, i = positions[arg]
                 stack = stacks[s]
                 while stack[i+1:]:
@@ -59,45 +81,31 @@ with stdin_input() as f:
         def do(take, to):
             take_s, take_i = positions[take]
             to_s, to_i = positions[to]
-            source = stacks[take_s]
-            dest = stacks[to_s]
+            source, dest = stacks[take_s], stacks[to_s]
             length = len(dest)
             dest.extend(source[take_i:])
             del source[take_i:] 
             for i in range(length, len(dest)):
                 positions[dest[i]] = to_s, i   
 
+        methods = { ('move', 'onto'): lambda a,b: restore(a, b),
+                    ('move', 'over'): lambda a,b: restore(a),
+                    ('pile', 'onto'): lambda a,b: restore(b),
+                    ('pile', 'over'): lambda a,b: ..., }
+        
         while True:
             
-            line = next(f)
-            if line.strip() == 'quit': 
-                break
+            line = next(f).strip()
+
+            if line == 'quit': break
 
             with line_bind(line, str, int, str, int) as (act, a, placing, b):
 
-                a_stack, a_index = positions[a]
-                b_stack, b_index = positions[b]
+                if a == b or positions[a][0] == positions[b][0]: continue
 
-                if a == b or a_stack == b_stack: continue
-
-                if act == 'move' and placing == 'onto':
-                    restore(a)
-                    restore(b)
-                elif act == 'move' and placing == 'over':
-                    restore(a)      
-                elif act == 'pile' and placing == 'onto':
-                    restore(b)      
-                elif act == 'pile' and placing == 'over':
-                    pass
-
+                dispatch(act, a, placing, b, table=methods)
                 do(take=a, to=b)
-                #print('\n')
-                #for i, s in enumerate(stacks):
-                    #print("{}: {}".format(i, " ".join(map(str, s))))
-                #print(positions)
 
-
-        #print('\n')
         for i, s in enumerate(stacks):
             print("{}:{}{}".format(i, " " if s else "", " ".join(map(str, s))))
 

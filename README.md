@@ -12,7 +12,7 @@ In this repo I put my programming training, mostly based on the [CP book][cpbook
 
 My plan is to use Python as the primary language to solve problems; for this reason,
 the [`python-libs`][python:libs] directory contains useful definitions to ease solving, 
-such as [input utils][libs:input], [sorting and ordering][libs:sorting].
+such as [input utils][libs:input], [sorting and ordering][libs:sorting], [behavior][libs:behavior].
 
 
 ## WIP problems
@@ -29,7 +29,7 @@ The following content grows as a stack, namely most recently solved on top:
 
    -    [UVa 101][UVa101]: **The Block Problem** ([code][UVa101:code])<br>
         *trick*: a sort of *double dispatching* to implement an *automaton* of 
-        commands; moreover, nice play with Python `list`s
+        commands; moreover, nice play with Python `list`s used as stacks
    -    [UVa 11942][UVa11942]: **Lumberjack Sequencing** ([code][UVa11942:code])<br>
         *trick*: use Python condition concatenation `a < b < c < d < e < f < g < h < i < j` 
         for asc/des order checks
@@ -53,6 +53,7 @@ The following content grows as a stack, namely most recently solved on top:
 [python:libs]:https://github.com/massimo-nocentini/competitive-programming/tree/master/python-libs
 [libs:input]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/inpututils.py
 [libs:sorting]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/sorting.py
+[libs:behavior]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/behavior.py
 
 [UVa10141]:https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=609&page=show_problem&problem=1082
 
