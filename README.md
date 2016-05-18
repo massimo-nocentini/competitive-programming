@@ -28,6 +28,25 @@ such as [input utils][libs:input], [sorting and ordering][libs:sorting], [behavi
 
 The following content grows as a stack, namely most recently solved on top:
 
+   -    [UVa 11040][UVa11040]: **Add bricks in the wall** ([code][UVa11040:code])<br>
+        *trick*: probably TLE if exaustive search is done via backtrack. Understand the problem, yields
+        a recursive structure:
+
+        | | | $\hat{3}$ | | |
+        | | $a_{2}$ | | $a_{3}$ | |
+        |$\hat{3}$| | $a_{1}$ | |$\hat{1}$| 
+
+        therefore, solving the system of equations respect $a_{1}$:
+        $$
+            a_{2}=\hat{2}+a_{1}\\
+            a_{3}=a_{1}+\hat{1}+\\
+            \hat{3}=a_{2}+a_{3}\\
+        $$
+        yields $a_{1}=\frac{\hat{3}-\hat{2}-\hat{1}}{2}$. According to the problem rules, 
+        we use the former two equations in the system to fill both $a_{2}$ and $a_{3}$.
+        Observe that this holds within the *whole* triangle, therefore it is possible to
+        build it during input scan, avoiding to fill it bottom-up.
+
    -    [UVa 101][UVa101]: **The Block Problem** ([code][UVa101:code])<br>
         *trick*: a sort of *double dispatching* to implement an *automaton* of 
         commands; moreover, nice play with Python `list`s used as stacks
@@ -57,6 +76,9 @@ The following content grows as a stack, namely most recently solved on top:
 [libs:behavior]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/behavior.py
 
 [UVa10141]:https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=609&page=show_problem&problem=1082
+
+[UVa11040]:https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=624&page=show_problem&problem=1981
+[UVa11040:code]:https://github.com/massimo-nocentini/competitive-programming/blob/master/UVa/11040.py
 
 [UVa101]:https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=37
 [UVa101:code]:https://github.com/massimo-nocentini/competitive-programming/blob/master/UVa/101.py
