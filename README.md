@@ -29,8 +29,8 @@ such as [input utils][libs:input], [sorting and ordering][libs:sorting], [behavi
 The following content grows as a stack, namely most recently solved on top:
 
    - [UVa 11040][UVa11040]: **Add bricks in the wall** ([code][UVa11040:code])<br>
-   ..*trick*: probably TLE if exaustive search is done via backtrack. The problem has
-   ..a recursive structure, where α, β and γ are given integers:
+   *trick*: probably TLE if exaustive search is done via backtrack. The problem has
+   a recursive structure, where α, β and γ are given integers:
              
               α    
              δ ε
