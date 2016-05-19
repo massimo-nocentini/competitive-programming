@@ -30,7 +30,7 @@ def line_bind(line, *ctors, splitter=lambda l: l.split(' '), do=None):
     yield do(g) if do else g
 
 @contextmanager
-def stdin_input(getter=lambda: fileinput.input(), raw_iter=True):
+def stdin_input(getter=lambda: fileinput.input(), raw_iter=False):
     '''
     Produces a way to fetch lines by a source.
 
@@ -56,3 +56,6 @@ def forever_read_until_event(doer, reader=lambda: stdin_input(), event=StopItera
             except event: break
 
 #________________________________________________________________________
+
+
+
