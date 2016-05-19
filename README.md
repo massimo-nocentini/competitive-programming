@@ -2,7 +2,7 @@
 # Competitive Programming
 
 In this repo I put my programming training, mostly based on the [CP book][cpbook], against 
-[UVa judge][UVa:judge]. An [index][index] of problem is provided.
+[UVa judge][UVa:judge]; moreover, an problems [index][index] is provided.
 
 
 [cpbook]:http://cpbook.net/#CP3details
