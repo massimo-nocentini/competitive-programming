@@ -12,7 +12,8 @@ In this repo I put my programming training, mostly based on the [CP book][cpbook
 
 My plan is to use Python as the primary language to solve problems; for this reason,
 the [`python-libs`][python:libs] directory contains useful definitions to ease solving, 
-such as [input utils][libs:input], [sorting and ordering][libs:sorting], [behavior][libs:behavior].
+such as [input utils][libs:input], [sorting and ordering][libs:sorting], 
+[behavior][libs:behavior], [bit manipulation][libs:bit:manipulation].
 
 
 ## WIP problems
@@ -28,6 +29,9 @@ such as [input utils][libs:input], [sorting and ordering][libs:sorting], [behavi
 
 The following content grows as a stack, namely most recently solved on top:
 
+   - [UVa 11173][UVa11173]: **Gray codes** ([code][UVa11173:code])<br>
+     *trick*: very elegant solution using bits manipulation, maybe the set of 
+     test cases is quite big, my sol runs in 2.48 sec, against a time limit of 3 sec.
    - [UVa 11040][UVa11040]: **Add bricks in the wall** ([code][UVa11040:code])<br>
      *trick*: probably TLE if exaustive search is done via backtrack. The problem has
      a recursive structure, where α, β and γ are given integers:
@@ -73,8 +77,12 @@ The following content grows as a stack, namely most recently solved on top:
 [libs:input]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/inpututils.py
 [libs:sorting]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/sorting.py
 [libs:behavior]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/behavior.py
+[libs:bit:manipulation]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/bits.py
 
 [UVa10141]:https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=609&page=show_problem&problem=1082
+
+[UVa11173]:https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=2114
+[UVa11173:code]:https://github.com/massimo-nocentini/competitive-programming/blob/master/UVa/11173.py
 
 [UVa11040]:https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=624&page=show_problem&problem=1981
 [UVa11040:code]:https://github.com/massimo-nocentini/competitive-programming/blob/master/UVa/11040.py
