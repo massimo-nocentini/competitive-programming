@@ -45,9 +45,14 @@ def from_mask(m, coding='big'):
 
     >>> from_mask((0,0,1,1), coding='little')
     12
+
     """
-    digits = m if coding == 'big' else reversed(m)
-    return int('0b'+''.join(map(str, digits)), base=2)
+    n = 0
+    for i, b in enumerate(m if coding == 'little' else reversed(m)):
+        n |= b * (1 << i)
+
+    return n
+
 
 def as_mask(n, coding='big'):
     """
@@ -69,10 +74,11 @@ def as_mask(n, coding='big'):
     (0, 0, 1, 1)
 
     """
-    m = map(int, bin(n)[2:])
-    return tuple(m if coding == 'big' else reversed(list(m)))
+    m = [is_on(n, i, return_int=True) for i in range(n.bit_length())]
+    return tuple(m if coding == 'little' else reversed(m))
 
-def ones(S):
+
+def ones_of(S):
     """
     Returns the positions of bits 1 in S, seen as a mask.
 
@@ -83,16 +89,30 @@ def ones(S):
     Examples
     ========
 
-    >>> ones(12)
+    >>> ones_of(12)
     [2, 3]
 
-    >>> ones(int(0b1000101010))
+    >>> ones_of(int(0b1000101010))
     [1, 3, 5, 9]
 
     """
 
     mask = as_mask(S, coding='little')
     return [i for i, m in enumerate(mask) if m]
+
+def from_ones(ones):
+    """
+    Returns an integer with bits set to 1 according to positions in `ones`. 
+
+    >>> bin(from_ones([1, 3, 5, 9]))
+    '0b1000101010'
+
+    """ 
+    n = 0
+    for o in ones:
+        n = set_bit(n, o)
+    return n
+    
 
 def set_bit(S, j): 
     """
@@ -122,8 +142,8 @@ def is_on(S, j, return_int=False):
     (True, False)
 
     """
-    res = S & (1 << j)
-    return res if return_int else bool(res)
+    res = bool(S & (1 << j))
+    return int(res) if return_int else res
 
 def clear_bit(S, j):
     """
