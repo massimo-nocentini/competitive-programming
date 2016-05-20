@@ -25,7 +25,74 @@ the set or, in parallel, discard elements for which the predicate has no more se
 
 """
 
-import math
+
+def from_mask(m, coding='big'):
+    """
+    Returns the integer represented by the bit mask `m`, given in `coding` scheme.
+
+    Keyword argument `coding` represent the coding scheme used by mask `m`, it 
+    resembles keyword `byteorder` in function `int.to_bytes`. If it is 'big', then
+    a `big endian` scheme has been applied, namely bits at the *beginning* of `m` are the 
+    most significant bits of the returned integer; otherwise a `little endian` scheme applies, 
+    namely bits at the *end* of the given mask `m` are most significant bits of the
+    returned integer.
+
+    Examples
+    ========
+
+    >>> from_mask((1,1,0,0), coding='big')
+    12
+
+    >>> from_mask((0,0,1,1), coding='little')
+    12
+    """
+    digits = m if coding == 'big' else reversed(m)
+    return int('0b'+''.join(map(str, digits)), base=2)
+
+def as_mask(n, coding='big'):
+    """
+    Returns `n` as a bit mask, namely an iterable of bits, according to `coding` scheme.
+
+    Keyword argument `coding` represent the coding scheme used to build the mask, it 
+    resembles keyword `byteorder` in function `int.to_bytes`. If it is 'big', then
+    a `big endian` scheme is applied, namely most significant bits of `n` are at 
+    the *beginning* of the returned mask; otherwise a `little endian` scheme applies, 
+    namely most significant bits of `n` are at the *end* of the returned mask.
+
+    Examples
+    ========
+
+    >>> as_mask(12, coding='big')
+    (1, 1, 0, 0)
+
+    >>> as_mask(12, coding='little')
+    (0, 0, 1, 1)
+
+    """
+    m = map(int, bin(n)[2:])
+    return tuple(m if coding == 'big' else reversed(list(m)))
+
+def ones(S):
+    """
+    Returns the positions of bits 1 in S, seen as a mask.
+
+    The returned iterable can be interpreted as the set of 
+    elements for which *predicate* `S` holds among `S.bit_length()`
+    objects; eventually, it identifies a subset.
+
+    Examples
+    ========
+
+    >>> ones(12)
+    [2, 3]
+
+    >>> ones(int(0b1000101010))
+    [1, 3, 5, 9]
+
+    """
+
+    mask = as_mask(S, coding='little')
+    return [i for i, m in enumerate(mask) if m]
 
 def set_bit(S, j): 
     """
@@ -106,6 +173,8 @@ def is_power_of_two(S):
     return False if S & (S - 1) else True
 
 def nearest_power_of_two(S):
+
+    import math
     return math.floor(2**(math.log2(S) + .5))
 
 def turn_off_last_bit(S):
@@ -123,13 +192,31 @@ def turn_on_last_consecutive_zeroes(S):
 #_______________________________________________________________________
 
 def gray_code(k): 
+    """
+
+    Examples
+    ========
+
+    >>> bin(gray_code(0b101100110))
+    '0b111010101'
+
+    """
     g = k ^ (k >> 1)
     return g
 
 def gray_position(g):
+    """
+
+    Examples
+    ========
+
+    >>> bin(gray_position(0b111010101))
+    '0b101100110'
+
+    """
     k=0
     for i in reversed(range(g.bit_length())):
-        k ^= all_on(i+1) * is_on(g, i)
+        k ^= set_all(i+1) * is_on(g, i)
     return k
 
 def gray_codes(length=None, justified=False):
