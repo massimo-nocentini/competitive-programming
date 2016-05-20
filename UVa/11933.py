@@ -115,14 +115,6 @@ with stdin_input() as next_line:
             a, b = 0, 0
             for i, m in enumerate(ones(n)):
                 a, b = (a, set_bit(b, m)) if i % 2 else (set_bit(a, m), b)
-                #print("{} {}".format(a, b))
 
             print("{} {}".format(a, b))
     
-    
-    
-    
-    
-    
-    
-            
