@@ -25,6 +25,8 @@ such as [input utils][libs:input], [sorting and ordering][libs:sorting],
 [libs:timing]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/timing.py
 [libs:gray:codes]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/graycodes.py
 
+## Tutorials
+
 At the same time, I help myself by taking notes about programming techniques, collecting
 them in Jupyter notebooks:
 
