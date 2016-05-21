@@ -2,10 +2,10 @@
 # Competitive Programming
 
 In this repo I put my programming training, mostly based on the [CP book][cpbook], against 
-[UVa judge][UVa:judge]; moreover, an [index][index] of problems is provided.
+[UVa judge][UVa:judge]; moreover, an [index][index] is provided.
 
-At the same time I help myself taking notes about programming techniques, collecting
-them as Jupyter notebooks. Here's some of them:
+At the same time, I help myself by taking notes about programming techniques, collecting
+them in Jupyter notebooks:
 
    - [bit masking][bm]
 
