@@ -61,17 +61,17 @@ def gray_codes(length=None, justified=False):
         yield ('0b' + bin(g)[2:].rjust(length, '0')) if length and justified else g 
 
 
-def high(codes, on=lambda *args: args[-1], off=lambda *args: args[-1], redux=None):
+def high(codes, on, off, redux, full_tuple=False):
     
     from itertools import tee
-    from math import log2
+    from math import log2, floor
 
     original, shifted = tee(codes)
     first = next(shifted)
 
     for o, s in zip(original, shifted):
-        toggle_position = log2(o ^ s)
-        t = o, s, toggle_position, redux
+        toggle_position = floor(log2(o ^ s))
+        t = (o, s, toggle_position, redux) if full_tuple else (toggle_position, redux)
         redux = on(*t) if o < s else off(*t)
         yield (o, s, toggle_position, redux)
 
