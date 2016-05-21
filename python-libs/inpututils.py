@@ -59,3 +59,4 @@ def forever_read_until_event(doer, reader=lambda: stdin_input(), event=StopItera
 
 
 
+
