@@ -239,7 +239,7 @@ def toggle_bit(S, j):
     return S ^ (1 << j)
 
 def low_bit(S): 
-    return S & (-S)
+    return (S & (-S)).bit_length() - 1
 
 def set_all(n):
     return (1 << n) - 1
