@@ -62,10 +62,6 @@ def repeat(next_line):
 
     def do(source, stack, anagram, prefix, actions,):
 
-        if prefix == len(target):
-            print(' '.join(list(actions))) 
-            return
-
         if source: # `i` step
             head, *tail = source
             do(tail, stack + [head], anagram, prefix, 
@@ -75,8 +71,10 @@ def repeat(next_line):
             *init, last = stack
             new_anagram = anagram + last
             if new_anagram[prefix] == target[prefix]:
-                do(source, init, new_anagram, prefix + 1, 
-                   actions + ('o' if source else ''))
+                if prefix == len(target)-1:
+                    print(' '.join(list(actions))) 
+                else:
+                    do(source, init, new_anagram, prefix + 1, actions + 'o')
 
     print('[')
     do(list(string), [], '', 0, '')
