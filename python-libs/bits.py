@@ -221,6 +221,29 @@ def clear_bit(S, j):
     """
     return S & ~(1 << j)
 
+def low_bit_and_clear(S):
+    """ 
+    Returns a pair of `j = low_bit(S)` and `clear_bit(S, j)`.
+
+    This is an aggregating function, similar in spirit to `test_and_set`,
+    which consumes a set `S` and returns the position of the first bit 1,
+    from the right (least significant part), and a new set with that bit 
+    turned off.
+    
+    Examples
+    ========
+
+    >>> S = 0b101010
+    >>> j, R = (low_bit_and_clear(S))
+    >>> j
+    1
+    >>> bin(R)
+    '0b101000'
+
+    """
+    j = low_bit(S)
+    return j, clear_bit(S, j)
+
 def toggle_bit(S, j):
     """
     Returns a new set from set `S` with the j-th item toggled (flip the status of).
