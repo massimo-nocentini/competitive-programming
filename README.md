@@ -32,8 +32,10 @@ them in Jupyter notebooks:
 
    - [bit masking][bm]
    - [gray codes][gray]
+   - [backtracking][backtrack]
 
 [bm]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/bitmasking.ipynb?flush_cache=true
 [gray]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/graycodes.ipynb?flush_cache=true
+[backtrack]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/backtrack.ipynb?flush_cache=true
 
 
