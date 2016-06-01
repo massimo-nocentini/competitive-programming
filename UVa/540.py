@@ -102,13 +102,15 @@ with stdin_input() as next_line:
 
                 if command == 'STOP\n': break
 
-                message, *teammate = command.split(' ')
+                message, *teammates = command.split(' ')
                 if message == 'DEQUEUE\n':
                     print(queue.pop())
                 else:
-                    queue.appendleft(int(teammate.pop()))
+                    queue.appendleft(int(teammates.pop()))
 
             print()
+
+    print()
 
 
 
