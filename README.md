@@ -19,7 +19,7 @@ classified as follows:
    - **bitmasking**: [bit manipulation][libs:bit:manipulation], [gray codes][libs:gray:codes]
    - **sorting**: [sorting and ordering][libs:sorting]
    - **data structures**:
-      - *linear*: [team queue][teamqueue]
+      - *linear*: [team queue][libs:teamqueue]
 
 [python:libs]:https://github.com/massimo-nocentini/competitive-programming/tree/master/python-libs
 [libs:input]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/inpututils.py
