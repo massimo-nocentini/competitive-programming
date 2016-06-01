@@ -12,10 +12,14 @@ In this repo I put my programming training, mostly based on the [CP book][cpbook
 ## Python libs
 
 My plan is to use Python as the primary language to solve problems; for this reason,
-the [`python-libs`][python:libs] directory contains useful definitions to ease solving, 
-such as [input utils][libs:input], [sorting and ordering][libs:sorting], 
-[behavior][libs:behavior], [bit manipulation][libs:bit:manipulation],
-[timing][libs:timing], [gray codes][libs:gray:codes].
+the [`python-libs`][python:libs] directory contains useful definitions to ease solving,
+grouped as follows:
+
+   - **utils, IO**: [input utils][libs:input], [behavior][libs:behavior], [timing][libs:timing]
+   - **bitmasking**: [bit manipulation][libs:bit:manipulation], [gray codes][libs:gray:codes]
+   - **sorting**: [sorting and ordering][libs:sorting]
+   - **data structures**:
+      - *linear*: [team queue][teamqueue]
 
 [python:libs]:https://github.com/massimo-nocentini/competitive-programming/tree/master/python-libs
 [libs:input]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/inpututils.py
@@ -24,6 +28,7 @@ such as [input utils][libs:input], [sorting and ordering][libs:sorting],
 [libs:bit:manipulation]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/bits.py
 [libs:timing]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/timing.py
 [libs:gray:codes]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/graycodes.py
+[libs:teamqueue]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/teamqueue.py
 
 ## Tutorials
 
