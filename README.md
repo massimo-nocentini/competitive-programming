@@ -13,7 +13,7 @@ In this repo I put my programming training, mostly based on the [CP book][cpbook
 
 My plan is to use Python as the primary language to solve problems; for this reason,
 the [`python-libs`][python:libs] directory contains useful definitions to ease solving,
-grouped as follows:
+classified as follows:
 
    - **utils, IO**: [input utils][libs:input], [behavior][libs:behavior], [timing][libs:timing]
    - **bitmasking**: [bit manipulation][libs:bit:manipulation], [gray codes][libs:gray:codes]
