@@ -62,9 +62,10 @@ def doer(next_line):
 
     for char in next_line().strip():
         if char == '[': 
-            i = 0
+            i = 0 # go at the begining and insert from there
         elif char == ']': 
-            i = len(beiju)
+            # going to an index exceeding the current queue `len` is the same to `append`
+            i = len(beiju) 
         else:
             beiju.insert(i, char)
             i += 1
