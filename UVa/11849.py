@@ -2,6 +2,7 @@
 
 import fileinput
 from contextlib import contextmanager
+from heapq import heappop
 
 @contextmanager
 def line_bind(line, *ctors, splitter=lambda l: l.split(' '), do=None):
@@ -63,13 +64,19 @@ with stdin_input(raw_iter=True) as next_line:
 
         if not n and not m: break
 
-        jack = 0
-        for _ in range(n): jack |= 1 << int(next(next_line))
+        jack = [int(next(next_line)) for _ in range(n)] # it is already a heap
         
         commons = 0
         for _ in range(m): 
+
             j = int(next(next_line)) 
-            commons += (jack & (1 << j)) >> j
+
+            while jack and jack[0] < j: heappop(jack)
+
+            if not jack: 
+                break
+
+            commons += (j == jack[0])
 
         print(commons)
 
