@@ -57,6 +57,18 @@ def forever_read_until_event(doer, reader=lambda: stdin_input(), event=StopItera
 
 #________________________________________________________________________
 
+def python_code(*objs, markdown=True):
 
+    import inspect
+
+    src = "\n".join(inspect.getsource(obj) for obj in objs)
+    
+    if markdown:
+        from IPython.display import Markdown
+        src = Markdown('```python\n{0}\n```'.format(src))
+    
+    return src
+
+#________________________________________________________________________
 
 
