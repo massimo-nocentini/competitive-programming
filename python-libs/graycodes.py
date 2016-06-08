@@ -1,5 +1,5 @@
 
-from bits import set_all, is_on
+from bits import set_all, is_on, toggle_bit
 
 def gray_code(k): 
     """
@@ -77,3 +77,37 @@ def high(codes, on, off, redux, full_tuple=False):
 
 
 #_______________________________________________________________________
+
+def rank_gray_code_direct(n):
+    """
+    Returns an iterator of Gray codes of length `n`.
+    """
+    code = 0
+
+    def gen(i):
+        nonlocal code
+        if i > -1:
+            yield from gen(i-1)
+            #yield code
+            code = toggle_bit(code, i)
+            yield code
+            yield from gen(i-1)
+             
+
+    yield code
+    yield from gen(n-1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
