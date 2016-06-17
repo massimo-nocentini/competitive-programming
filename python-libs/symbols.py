@@ -23,10 +23,12 @@ def latin_symbols():
     """
     return "ḂḃḆḇḊḋḎḏḐḑḞḟḠḡḢḣḦḧḨḩḰḱḴḵḺḻḾḿṀṁṄṅṈṉṔṕṖṗṘṙṞṟṠṡṪṫṮṯṼṽẀẁẂẃẄẅẆẇẊẋẌẍẎẏẐẑẔẕẖẗẘẙẢảẺẻẼẽỈỉỎỏỦủỲỳỶỷỸỹ"
 
-def box_drawings_light(piece_name):
+def light_box_drawings():
     """
-    Return box symbol named `piece_name`, according to Vim's digraph table.
+    Return an iterable of *light* box symbols.
+
+    Built by Vim's `:help digraph-table@en` command.
     """
-    pass
+    return "─│├┤┬┴┼┌┐└┘"
 
     
