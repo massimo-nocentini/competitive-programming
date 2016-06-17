@@ -1,10 +1,10 @@
 
 from contextlib import contextmanager
+from time import time
+from datetime import timedelta
 
 @contextmanager
 def timing(f):
-
-    from time import time
 
     start = time()
     try:
@@ -14,6 +14,6 @@ def timing(f):
     finally:
         end = time()
 
-    yield r, start, end
+    yield r, timedelta(seconds=end-start)
 
 #________________________________________________________________________
