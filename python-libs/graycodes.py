@@ -110,9 +110,10 @@ def binary_reflected_graycodes_reduce(codes,
     yield (last, -1, changingbit_position(last, first), redux)
 #_______________________________________________________________________
 
-def rank_gray_code_direct(n):
+def graycodes_direct(n):
     """
-    Returns an iterator of Gray codes of length `n`.
+    Returns an iterable of Gray codes of length `n`, each paired with changing-bit positions.
+
     """
     code = 0
 
@@ -120,13 +121,12 @@ def rank_gray_code_direct(n):
         nonlocal code
         if i > -1:
             yield from gen(i-1)
-            #yield code
             code = toggle_bit(code, i)
-            yield code
+            yield code, i
             yield from gen(i-1)
              
 
-    yield code
+    yield code, 0
     yield from gen(n-1)
 
 

@@ -74,7 +74,7 @@ def as_mask(n, coding='big'):
     (0, 0, 1, 1)
 
     """
-    m = [is_on(n, i, return_int=True) for i in range(n.bit_length())]
+    m = [is_on(n, i) for i in range(n.bit_length())]
     return tuple(m if coding == 'little' else reversed(m))
 
 def pretty_mask(m, coding='big', width=None):
@@ -190,9 +190,9 @@ def set_bit(S, j):
     """
     return S | (1 << j)
 
-def is_on(S, j, return_int=False): 
+def is_on(S, j): 
     """
-    Returns `True` if the `j`-th item of the set `S` is on.
+    Returns 1 if and only if the `j`-th item of the set `S` is on.
 
     Examples
     ========
@@ -200,11 +200,10 @@ def is_on(S, j, return_int=False):
     Check if the 3-th and then 2-nd item of the set is on:
     >>> S = 0b101010
     >>> is_on(S, 3), is_on(S, 2)
-    (True, False)
+    (1, 0)
 
     """
-    res = bool(S & (1 << j))
-    return int(res) if return_int else res
+    return (S & (1 << j)) >> j
 
 def clear_bit(S, j):
     """
