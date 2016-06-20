@@ -126,12 +126,49 @@ def graycodes_direct(n):
             yield from gen(i-1)
              
 
-    yield code, 0
+    yield code, -1
     yield from gen(n-1)
 
 
+def rightmost_zeroes_in_binary_counting(n):
+    """
+    I'm a generator of positions of *rightmost zeroes* in binary counting up to `2**n -1`.
 
+    This implements the loopless algorithm designed by Frank Ruskey; it is more
+    efficient than natural counting and scanning for rightmost zeroes, which is CAT however.
 
+    Examples
+    ========
+
+    Generate the transition sequence to solve the Hanoi tower problem with 3 disks:
+    >>> list(rightmost_zeroes_in_binary_counting(3))
+    [0, 1, 0, 2, 0, 1, 0]
+    
+    according to the result, we have to move first disk 0, then disk 1, then disk 0 again,
+    then disk 2, next disk 0, next disk 1 and, finally, disk 0; obviously, recipient peg
+    is according to the rule of the game.
+
+    """
+    tau = list(range(n+1))
+
+    while tau[0] != n:
+        yield tau[0]
+        i = tau[0]
+        tau[0], tau[i], tau[i+1] = 0, tau[i+1], i+1
+
+def graycodes_by_transition_sequence(positions):
+    """
+    I'm a generator of graycodes, flipping bits according to transitions sequence `positions`.
+
+    """
+
+    graycode = 0
+
+    yield graycode, -1
+
+    for p in positions:
+        graycode = toggle_bit(graycode, p)
+        yield graycode, p
 
 
 
