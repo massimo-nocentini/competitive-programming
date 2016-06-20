@@ -243,22 +243,24 @@ def low_bit_and_clear(S):
     j = low_bit(S)
     return j, clear_bit(S, j)
 
-def toggle_bit(S, j):
+def toggle_bits(S, *positions):
     """
-    Returns a new set from set `S` with the j-th item toggled (flip the status of).
+    Returns a new set from set `S` with bits toggled (flip the status of) in the given `positions`.
 
     Examples
     ========
 
     Toggle the 2-nd item and then 3-rd item of the set
     >>> S = int('0b101000', base=2)
-    >>> S = toggle_bit(S, 2)
-    >>> S = toggle_bit(S, 3)
+    >>> S = toggle_bits(S, 2, 3)
     >>> bin(S)
     '0b100100'
 
     """
-    return S ^ (1 << j)
+    for j in positions:
+        S = S ^ (1 << j)
+
+    return S
 
 def low_bit(S): 
     return (S & (-S)).bit_length() - 1

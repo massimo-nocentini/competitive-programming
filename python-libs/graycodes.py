@@ -1,5 +1,6 @@
 
-from bits import set_all, is_on, toggle_bit
+import itertools
+from bits import set_all, is_on, toggle_bits
 
 def graycode_unrank(k): 
     """
@@ -117,14 +118,14 @@ def graycodes_direct(n):
     """
     code = 0
 
-    def gen(i):
+    def swap(i):
         nonlocal code
+        code = toggle_bits(code, i)
+        yield code, i
+
+    def gen(i):
         if i > -1:
-            yield from gen(i-1)
-            code = toggle_bit(code, i)
-            yield code, i
-            yield from gen(i-1)
-             
+            yield from itertools.chain(gen(i-1), swap(i), gen(i-1))
 
     yield code, -1
     yield from gen(n-1)
@@ -167,15 +168,32 @@ def graycodes_by_transition_sequence(positions):
     yield graycode, -1
 
     for p in positions:
-        graycode = toggle_bit(graycode, p)
+        graycode = toggle_bits(graycode, p)
         yield graycode, p
 
 
+def graycodes_combinations(n, k):
 
+    combination = set_all(k)
 
+    if not k or k == n: yield combination
 
+    def swap(n, k):
+        nonlocal combination
+        i, j = (n-2, n-1) if k < 2 else (k-2, n-1)
+        combination = toggle_bits(combination, i, j)
+        yield combination, i, j 
 
+    def gen(n, k):
+        if k in range(1, n):
+            yield from itertools.chain(gen(n-1, k), swap(n, k), neg(n-1, k-1))
 
+    def neg(n, k):
+        if k in range(1, n):
+            yield from itertools.chain(gen(n-1, k-1), swap(n, k), neg(n-1, k))
+
+    yield combination, -1, -1
+    yield from gen(n, k)
 
 
 
