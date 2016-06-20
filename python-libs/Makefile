@@ -1,4 +1,4 @@
 
-bits:
-	python -m doctest -v bits.py
-	python -m doctest -v graycodes.py
+doctests:
+	python3.5 -m doctest -v bits.py
+	python3.5 -m doctest -v graycodes.py
