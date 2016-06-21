@@ -283,10 +283,66 @@ def nearest_power_of_two(S):
     return math.floor(2**(math.log2(S) + .5))
 
 def turn_off_last_bit(S):
-    return S & (S - 1)
+    """
+    Turns off the rightmost 1-bit in a word, producing 0 if none.
+
+    By product, the position of toggled 1-bit is returned, -1 if none.
+
+    Examples
+    ========
+
+    When a 1-bit is present:
+    >>> S, b = turn_off_last_bit(0b1011000)
+    >>> bin(S)
+    '0b1010000'
+    >>> b
+    3
+
+    When a 1-bit is the very least bit:
+    >>> S, b = turn_off_last_bit(0b1)
+    >>> bin(S)
+    '0b0'
+    >>> b
+    0
+
+    When a 1-bit is *not* present:
+    >>> S, b = turn_off_last_bit(0b0)
+    >>> bin(S)
+    '0b0'
+    >>> b
+    -1
+
+    """
+    SS = S & (S - 1)
+    b = (SS ^ S).bit_length() - 1
+    return (SS, b) if S else (SS, -1)
 
 def turn_on_last_zero(S): 
-    return S | (S + 1)
+    """
+    Turns on the rightmost 0-bit in word `S`, producing all 1's if none.
+
+    By product, the position of toggled 0-bit is returned.
+
+    Examples
+    ========
+
+    When a 0-bit is present:
+    >>> S, z = turn_on_last_zero(0b10100111)
+    >>> bin(S)
+    '0b10101111'
+    >>> z
+    3
+
+    When a 0-bit is *implicitly* present:
+    >>> S, z = turn_on_last_zero(0b11111)
+    >>> bin(S)
+    '0b111111'
+    >>> z
+    5
+    """
+    SS = S | (S + 1)
+    z = (SS ^ S).bit_length()-1
+    return SS, z
 
 def turn_off_last_consecutive_bits(S):
     return S & (S + 1)
