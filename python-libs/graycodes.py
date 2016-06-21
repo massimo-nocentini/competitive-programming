@@ -176,7 +176,9 @@ def graycodes_combinations(n, k):
 
     combination = set_all(k)
 
-    if not k or k == n: yield combination
+    if not k or k == n: 
+        yield combination
+        raise StopIteration()
 
     def swap(n, k):
         nonlocal combination
@@ -195,6 +197,32 @@ def graycodes_combinations(n, k):
     yield combination, -1, -1
     yield from gen(n, k)
 
+
+def graycodes_combinations_homogeneous(n, k):
+
+    combination = set_all(k)
+
+    def swap(i, j):
+        nonlocal combination
+        combination = toggle_bits(combination, i, j)
+        yield combination, i, j 
+
+    def gen(n, k):
+        if k == 1: 
+            for i in range(n-1): yield from swap(i, i+1)
+        elif k in range(2, n):
+            #yield from itertools.chain(gen(n-1, k), swap(k-2, n-3), neg(n-2, k-1), swap(k-2, n-1), gen(n-2, k-2))
+            yield from itertools.chain(gen(n-1, k), swap(n-1, n-2), neg(n-2, k-1), swap(k-2, n-2), gen(n-2, k-2))
+
+    def neg(n, k):
+        if k == 1: 
+            for i in range(n-1): yield from swap(i, i+1)
+        elif k in range(2, n):
+            #yield from itertools.chain(neg(n-2, k-2), swap(k-2, n-1), gen(n-2, k-1), swap(k-2, n-3), neg(n-1, k))
+            yield from itertools.chain(neg(n-2, k-2), swap(k-2, n-2), gen(n-2, k-1), swap(n-1, n-2), neg(n-1, k))
+
+    yield combination, -1, -1
+    yield from gen(n, k)
 
 
 
