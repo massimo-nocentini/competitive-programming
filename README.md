@@ -11,6 +11,7 @@ In addition, more interesting material can be found in the following places:
    - http://www.martystepp.com/acm/
    - http://www3.cs.stonybrook.edu/~skiena/392/javaprograms/
    - https://crypto.stanford.edu/pbc/notes/ (not really about programming, but with interesting math)
+   - http://docs.sympy.org/latest/modules/polys/wester.html (again, interesting math)
 
 [cpbook]:http://cpbook.net/#CP3details
 [UVa:judge]:https://uva.onlinejudge.org/index.php?option=com_frontpage&Itemid=1
