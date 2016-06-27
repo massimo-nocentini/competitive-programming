@@ -4,6 +4,13 @@
 In this repo I put my programming training, mostly based on the [CP book][cpbook], against 
 [UVa judge][UVa:judge]; moreover, an [index][index] is provided.
 
+In addition, more interesting material can be found in the following places:
+   - https://algocoding.wordpress.com/2015/04/21/notes-and-courses-for-competitive-programming/
+   - http://www.cs.cornell.edu/~wdtseng/icpc/
+   - https://algo.is/
+   - http://www.martystepp.com/acm/
+   - http://www3.cs.stonybrook.edu/~skiena/392/javaprograms/
+
 [cpbook]:http://cpbook.net/#CP3details
 [UVa:judge]:https://uva.onlinejudge.org/index.php?option=com_frontpage&Itemid=1
 [index]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/index.ipynb?flush_cache=true
