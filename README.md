@@ -30,6 +30,13 @@ classified as follows:
    - **data structures**:
       - *linear*: [team queue][libs:teamqueue]
 
+In order to use these modules in either IPython or Jupyter notebooks sessions, just set the `PYTHONPATH`
+variable, here's and example:
+   
+   ```bash
+    PYTHONPATH=~/Developer/working-copies/programming-contests/competitive-programming/python-libs/ jupyter-notebook
+   ```
+
 [python:libs]:https://github.com/massimo-nocentini/competitive-programming/tree/master/python-libs
 [libs:input]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/inpututils.py
 [libs:sorting]:https://github.com/massimo-nocentini/competitive-programming/blob/master/python-libs/sorting.py
