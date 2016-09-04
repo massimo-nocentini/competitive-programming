@@ -7,8 +7,8 @@ def promote_id_anchors(text):
     """
     Return a new string where each occurrence of a sequence ref `Aoooooo` replaced as `<a>` tag.
     """
-
-	import re
+    
+    import re
     return re.compile('(?P<id>A\d{6,6})').sub(r'<a href="http://oeis.org/\g<id>">\g<id></a>', text)
 
         
