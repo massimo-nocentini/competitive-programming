@@ -57,6 +57,7 @@ them in Jupyter notebooks:
    - [backtracking][backtrack]
    - [recursively-defined structures][recursively]
    - [Conway's Game of Life][gamelife]
+   - [OEIS integration][oeis]
 
 [gotchas]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/gotchas.ipynb?flush_cache=true
 [bm]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/bitmasking.ipynb?flush_cache=true
@@ -64,4 +65,4 @@ them in Jupyter notebooks:
 [backtrack]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/backtrack.ipynb?flush_cache=true
 [recursively]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/recursive-structures.ipynb?flush_cache=true
 [gamelife]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/gamelife.ipynb?flush_cache=true
-
+[oeis]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/oeis-interaction.ipynb?flush_cache=true
