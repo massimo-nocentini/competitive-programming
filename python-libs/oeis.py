@@ -27,7 +27,7 @@ def merge_splitted_text(lst):
             while j < len(lst) and not ('(End)' in lst[j] or '(end)' in lst[j]): j += 1
             joiner = "\n       - "
             #joiner = "\n<br>"
-            merged.append(joiner.join(lst[i:j if lst[j] == '(End)' else j+1])
+            merged.append(joiner.join(lst[i:j if j >= len(lst) or lst[j] == '(End)' else j+1])
                           .replace('(Start)', '').replace('(start)', '')
                           .replace('(End)', '').replace('(end)', ''))
             i = j+1
@@ -40,10 +40,10 @@ def merge_splitted_text(lst):
 #________________________________________________________________________
 
 class head_builder:
-    
+
     def __call__(self, doc):
         head = r"<div align='center'><b><a href='http://oeis.org/A{:06d}'>A{:06d}</a></b>: <i>{}</i><br></div>".format(
-            doc['number'], doc['number'], doc['name'], ) + "\n\nby {}".format(doc['author'])
+                doc['number'], doc['number'], doc['name'], ) + "\n\nby {}".format(doc['author'])
         return head
         
 class keyword_builder:
@@ -52,14 +52,11 @@ class keyword_builder:
         keyword = "\n_Keywords_: `{}`".format(doc['keyword'])
         return keyword
         
-class data_builder:
-    
-    def __init__(self, upper_limit):
-        self.upper_limit = upper_limit
-    
-    def __call__(self, doc):
+class ListData:
 
-        seq = doc['data'].split(',')[:self.upper_limit]
+    def __call__(self, caller, doc):
+
+        seq = doc['data'].split(',')[:caller.upper_limit]
         array_template = r'''
 $$
 \begin{env}{{c|{nel}}}
@@ -73,9 +70,43 @@ $$
            nat=" & ".join([str(i) for i in range(int(doc['offset'].split(',')[0]), len(seq))]),
            id="A{:06d}".format(doc['number']), 
            seq = " & ".join(seq))
+
+        return array_template
         
-        data = "\n_Data_:\n{}".format(array_template)
-        
+
+class TableData:
+
+    def __call__(self, caller, doc):
+
+        seq = doc['data'].split(',')#[:caller.upper_limit]
+        n, k = caller.upper_limit
+
+        rows = r'\\'.join([' & '.join([str(i)] + [seq[index] if j <= i else '' for j in range(k) for index in [i*(i+1)//2 + j] if index < len(seq)]) for i in range(n)])
+
+        array_template = r'''
+$$
+\begin{env}{{c|{nel}}}
+n, k & {nat} \\
+\hline
+{rows}
+\end{env}
+$$
+'''.format(env="{array}",
+           nel='c' * (k+1), 
+           nat=" & ".join([str(i) for i in range(int(doc['offset'].split(',')[0]), k)]),
+           rows=rows)
+
+        return array_template
+
+class data_builder:
+    
+    def __init__(self, upper_limit, representation):
+        self.upper_limit = upper_limit
+        self.representation = representation
+    
+    def __call__(self, doc):
+
+        data = "\n_Data_:\n{}".format(self.representation(self, doc))
         return data
     
 class content_builder:
@@ -138,9 +169,10 @@ class reference_builder(content_builder):
 #________________________________________________________________________
     
 def pretty_print(doc, 
-                 head=None, 
+                 head=None,
                  keyword=None, 
                  data_upper_limit=20,
+                 data_representation=ListData(), 
                  comment=lambda i, c: True,
                  formula=lambda i, c: True,
                  xref=lambda i, c: True,
@@ -149,7 +181,7 @@ def pretty_print(doc,
     
     builders = [head_builder(), 
                 keyword_builder(), 
-                data_builder(upper_limit=data_upper_limit), 
+                data_builder(upper_limit=data_upper_limit, representation=data_representation), 
                 comment_builder(filter_pred=comment), 
                 formula_builder(filter_pred=formula), 
                 xref_builder(filter_pred=xref),
@@ -160,27 +192,36 @@ def pretty_print(doc,
     return descr
 
 
-def oeis_search(id=None, seq=None, query="", start=0,):
+def oeis_search(id=None, seq=None, query="", start=0, table=False, xref=[], **kwds):
 
     # the following imports are too specific to appear at the top of the module.
     from requests import get
     from IPython.display import Markdown
 
-    payload = {"fmt": "json", "start": start}
     
-    if id: payload.update({"q": "id:A{:06d}".format(id)})
-    elif seq: payload.update({"q": ", ".join(map(str,seq))})
-    else: payload.update({"fmt": "json", "q": query})
+    query_components = [] # a list of query components, as strings to be joined later
+
+    if id: query_components .append("id:A{:06d}".format(id))
+    elif seq: query_components .append((", " if isinstance(seq, list) else " ").join(map(str,seq)))
+    else: query_components.append(query) 
+
+    if table: query_components .append("keyword:tabl")
+    for r in xref: query_components .append("xref:A{:06d}".format(id))
+    for k,v in kwds.items(): query_components .append("{}:{}".format(k,v))
+
+    payload = {"fmt": "json", "start": start, "q": ' '.join(query_components)}
     
     try:
         doc_result = get("https://oeis.org/search", params=payload,)
         doc = doc_result.json()
     except:
+        raise
         return lambda **pp_kwds: Markdown("<hr>__Connection Error__<hr>")
     
     def searchable(**pp_kwds):
         results_description = "_Results for query: <a href='{url}'>{url}</a>_<br><hr>".format(url=doc_result.url)
-        inner_results = [pretty_print(result, **pp_kwds) for result in doc['results']]
+        inner_results = [pretty_print(result, data_representation=TableData() if table else ListData(), **pp_kwds) 
+                            for result in doc['results']]
         return Markdown(results_description + "\n<hr>".join(inner_results))
     
     return searchable
