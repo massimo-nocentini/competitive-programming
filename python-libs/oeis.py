@@ -1,7 +1,7 @@
 
 from itertools import count
 
-import threading, re, json
+import threading, re, json, time
 from multiprocessing.dummy import Pool as ThreadPool
 from requests import get
 
@@ -72,7 +72,7 @@ n & {nat} \\
 $$
 '''.format(env="{array}",
            nel='c'*len(seq), 
-           nat=" & ".join([str(i) for i in range(int(doc['offset'].split(',')[0]), len(seq))]),
+           nat=" & ".join([str(i) for i in range(int(doc['offset'].split(',')[0]), len(seq)+1)]),
            id="A{:06d}".format(doc['number']), 
            seq = " & ".join(seq))
 
@@ -174,6 +174,7 @@ class reference_builder(content_builder):
 #________________________________________________________________________
     
 def pretty_print(doc, 
+                 data_only=False,
                  head=None,
                  keyword=None, 
                  data_upper_limit=20,
@@ -186,12 +187,14 @@ def pretty_print(doc,
     
     builders = [head_builder(), 
                 keyword_builder(), 
-                data_builder(upper_limit=data_upper_limit, representation=data_representation), 
-                comment_builder(filter_pred=comment), 
-                formula_builder(filter_pred=formula), 
-                xref_builder(filter_pred=xref),
-                link_builder(filter_pred=link), 
-                reference_builder(filter_pred=reference)]
+                data_builder(upper_limit=data_upper_limit, representation=data_representation)]
+    
+    if not data_only:
+        builders.extend([comment_builder(filter_pred=comment), 
+                         formula_builder(filter_pred=formula), 
+                         xref_builder(filter_pred=xref),
+                         link_builder(filter_pred=link), 
+                         reference_builder(filter_pred=reference)])
     
     descr = "\n".join([builder(doc) for builder in builders])
     return descr
@@ -225,8 +228,8 @@ def oeis_search(id=None, seq=None, query="", start=0, table=False, xref=[], **kw
     
     def searchable(**pp_kwds):
         results_description = "_Results for query: <a href='{url}'>{url}</a>_<br><hr>".format(url=doc_result.url)
-        inner_results = [pretty_print(result, data_representation=TableData() if table else ListData(), **pp_kwds) 
-                            for result in doc['results']]
+        if not doc['results']: doc['results'] = []
+        inner_results = [pretty_print(result, **pp_kwds) for result in doc['results']]
         return Markdown(results_description + "\n<hr>".join(inner_results))
     
     return searchable
@@ -246,7 +249,7 @@ def oeis_graph(seq_id, depth=2, workers=20):
             doc = doc_result.json()
             return seq_id, doc['results'].pop()
         except:
-            print("sequence {} needs retry".format(seq_id))
+            print("sequence {} needs retry; current text:\n{}\n".format(seq_id, doc_result.text))
             return seq_id, None
 
     def not_seen_so_far(ref_seq_id):
@@ -275,16 +278,22 @@ def oeis_graph(seq_id, depth=2, workers=20):
         for seq_id, result in results: 
             
             if not result:
-                cross_sequences.add(seq_id)
+                retry.add(seq_id)
                 continue
 
             # since `recursion` is called if `seq_id` hasn't been fetched
             sink.update({int(result['number']): result}) 
 
             # preparing for recursion
-            result['xref_as_set'] = cross_references(result['xref']) if 'xref' in result else set()
-            cross_sequences |= result['xref_as_set']
+            cross_sequences |= cross_references(result['xref']) if 'xref' in result else set()
             
+        if retry:
+            # sleep for some seconds, then retry
+            secs = 3
+            print("There are {} sequences to be downloaded again. Sleeping for {} secs than redo.".format(len(retry), secs))
+            time.sleep(secs)
+            recursion(set(filter(not_seen_so_far, retry)), step)
+
         recursion(set(filter(not_seen_so_far, cross_sequences)), step+1)
         
     recursion({seq_id}, step=0)
@@ -292,18 +301,30 @@ def oeis_graph(seq_id, depth=2, workers=20):
     return sink
     
 
-def load_graph(filename):
+def load_graph(filename, predicate=lambda k,v: True):
+
     with open(filename, 'r') as f:
-        graph = {}
-        for k, v in json.load(f).items():
-            v['xref_as_set'] = cross_references(v['xref']) if 'xref' in v else set()
-            graph[int(k)] = v # json decoder loads keys as `str` objects instead of `int`
-            #print(len(v['xref_as_set']))
-        return graph
+
+        graph = {int(k):v for k, v in json.load(f).items()}
+        return {k:v for k,v in adjust_crossreferences(graph).items() if predicate(k,v)}
+
+def adjust_crossreferences(graph):
+
+    for k, v in graph.items():
+
+        xrefs = cross_references(v['xref']) if 'xref' in v else set()
+        v['xref_as_set'] = {xr for xr in xrefs if xr in graph} 
+
+        for ref in v['xref_as_set']:
+
+            referenced = graph[ref]
+            if 'referees' not in referenced: referenced['referees'] = set()
+            referenced['referees'].add(k)
+
+    return graph
+    
 
 def fetch_graph(filename, **kwds): 
-
-    import time
 
     def save(graph):
         with open(filename, 'w') as f:
@@ -319,8 +340,8 @@ def fetch_graph(filename, **kwds):
 
     #print(graph)
 
-    for k,v in graph.items():
-        del v['xref_as_set'] # the json encoder doesn't handle `set` objects
+    #for k,v in graph.items():
+        #del v['xref_as_set'] # the json encoder doesn't handle `set` objects
 
     save(graph)
 
