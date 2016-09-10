@@ -1,6 +1,11 @@
 
 from itertools import count
 
+import threading, re, json
+from multiprocessing.dummy import Pool as ThreadPool
+from requests import get
+
+
 #________________________________________________________________________
 
 def promote_id_anchors(text):
@@ -225,3 +230,98 @@ def oeis_search(id=None, seq=None, query="", start=0, table=False, xref=[], **kw
         return Markdown(results_description + "\n<hr>".join(inner_results))
     
     return searchable
+
+def cross_references(xref):
+    regex = re.compile('(?P<id>A\d{6,6})')
+    return {int(r[1:]) for references in xref for r in regex.findall(references)}
+
+def oeis_graph(seq_id, depth=2, workers=20):
+        
+    sink = {}
+    
+    def fetch(seq_id):
+        payload = {"fmt": "json", "q": "id:A{:06d}".format(seq_id)}
+        doc_result = get("https://oeis.org/search", params=payload,)
+        try:
+            doc = doc_result.json()
+            return seq_id, doc['results'].pop()
+        except:
+            print("sequence {} needs retry".format(seq_id))
+            return seq_id, None
+
+    def not_seen_so_far(ref_seq_id):
+        return ref_seq_id not in sink
+    
+    def recursion(sequences, step):
+        
+        if step > depth: 
+            print("Horizon reached.")
+            return
+
+        print("Fringe at distance {}, {} sequences to fetch.".format(step, len(sequences)))
+
+        pool = ThreadPool(workers) # Make the Pool of workers
+
+        # Open the urls in their own threads and return the results
+        results = pool.map(fetch, sequences)
+
+        #close the pool and wait for the work to finish
+        pool.close()
+        pool.join()
+
+        cross_sequences = set()
+        retry = set() 
+
+        for seq_id, result in results: 
+            
+            if not result:
+                cross_sequences.add(seq_id)
+                continue
+
+            # since `recursion` is called if `seq_id` hasn't been fetched
+            sink.update({int(result['number']): result}) 
+
+            # preparing for recursion
+            result['xref_as_set'] = cross_references(result['xref']) if 'xref' in result else set()
+            cross_sequences |= result['xref_as_set']
+            
+        recursion(set(filter(not_seen_so_far, cross_sequences)), step+1)
+        
+    recursion({seq_id}, step=0)
+    
+    return sink
+    
+
+def load_graph(filename):
+    with open(filename, 'r') as f:
+        graph = {}
+        for k, v in json.load(f).items():
+            v['xref_as_set'] = cross_references(v['xref']) if 'xref' in v else set()
+            graph[int(k)] = v # json decoder loads keys as `str` objects instead of `int`
+            #print(len(v['xref_as_set']))
+        return graph
+
+def fetch_graph(filename, **kwds): 
+
+    import time
+
+    def save(graph):
+        with open(filename, 'w') as f:
+            json.dump(graph, f)
+
+    start_timestamp = time.time()
+
+    graph = oeis_graph(**kwds)
+
+    end_timestamp = time.time()
+
+    print("Elapsed time: {:3} secs.".format(end_timestamp - start_timestamp))
+
+    #print(graph)
+
+    for k,v in graph.items():
+        del v['xref_as_set'] # the json encoder doesn't handle `set` objects
+
+    save(graph)
+
+    print("Graph saved.")
