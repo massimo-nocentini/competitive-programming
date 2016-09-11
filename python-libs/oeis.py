@@ -72,7 +72,7 @@ n & {nat} \\
 $$
 '''.format(env="{array}",
            nel='c'*len(seq), 
-           nat=" & ".join([str(i) for i in range(int(doc['offset'].split(',')[0]), len(seq)+1)]),
+           nat=" & ".join([str(i) for i in range(int(doc['offset'].split(',')[0]), len(seq))]),
            id="A{:06d}".format(doc['number']), 
            seq = " & ".join(seq))
 
@@ -217,40 +217,80 @@ def oeis_search(id=None, seq=None, query="", start=0, table=False, xref=[], **kw
     for r in xref: query_components .append("xref:A{:06d}".format(id))
     for k,v in kwds.items(): query_components .append("{}:{}".format(k,v))
 
-    payload = {"fmt": "json", "start": start, "q": ' '.join(query_components)}
-    
-    try:
-        doc_result = get("https://oeis.org/search", params=payload,)
-        doc = doc_result.json()
-    except:
-        raise
+    def connection_error(exc):
         return lambda **pp_kwds: Markdown("<hr>__Connection Error__<hr>")
-    
-    def searchable(**pp_kwds):
-        results_description = "_Results for query: <a href='{url}'>{url}</a>_<br><hr>".format(url=doc_result.url)
-        if not doc['results']: doc['results'] = []
-        inner_results = [pretty_print(result, **pp_kwds) for result in doc['results']]
-        return Markdown(results_description + "\n<hr>".join(inner_results))
-    
-    return searchable
+
+    def json_error(GET_result, exc):
+        return lambda **pp_kwds: Markdown("<hr>__JSON decoding Error__:\n```{}```<hr>".format(GET_result.text))
+
+    def make_searchable(doc, GET_result):
+
+        def searchable(**pp_kwds):
+            results_description = "_Results for query: <a href='{url}'>{url}</a>_<br><hr>".format(url=GET_result.url)
+            inner_results = [pretty_print(result, **pp_kwds) for result in doc['results']]
+            return Markdown(results_description + "\n<hr>".join(inner_results))
+
+        return searchable
+
+    return fetch_payload(payload={"fmt": "json", "start": start, "q": ' '.join(query_components)},  
+                         then=make_searchable,
+                         network_error_handler=connection_error,
+                         json_decoding_error_handler=json_error)
+
 
 def cross_references(xref):
     regex = re.compile('(?P<id>A\d{6,6})')
     return {int(r[1:]) for references in xref for r in regex.findall(references)}
 
-def oeis_graph(seq_id, depth=2, workers=20):
+def fetch_payload(  payload, 
+                    then=None,
+                    network_error_handler=lambda exc: None, 
+                    json_decoding_error_handler=lambda GET_result, exc: None):
+
+    try: 
+        GET_result = get("https://oeis.org/search", params=payload,)
+    except Exception as e: 
+        return network_error_handler(e)
+
+    try:
+        doc = GET_result.json()
+        if not doc['results']: doc['results'] = []
+    except Exception as e:
+        return json_decoding_error_handler(GET_result, e)
+
+    return then(doc, GET_result) if callable(then) else doc
+
+def adjust_crossreferences(graph):
+
+    for k, v in graph.items():
+
+        xrefs = cross_references(v['xref']) if 'xref' in v else set()
+        v['xref_as_set'] = {xr for xr in xrefs if xr in graph} 
+
+        for ref in v['xref_as_set']:
+
+            referenced = graph[ref]
+            if 'referees' not in referenced: referenced['referees'] = set()
+            referenced['referees'].add(k)
+
+    return graph
+
+def oeis_graph(seq_id, depth=2, workers=20, post_processing=[adjust_crossreferences]):
         
     sink = {}
+    unknown = 'unknown'
     
     def fetch(seq_id):
+
         payload = {"fmt": "json", "q": "id:A{:06d}".format(seq_id)}
-        doc_result = get("https://oeis.org/search", params=payload,)
-        try:
-            doc = doc_result.json()
-            return seq_id, doc['results'].pop()
-        except:
-            print("sequence {} needs retry; current text:\n{}\n".format(seq_id, doc_result.text))
-            return seq_id, None
+
+        def error_handler(GET_result, exc):
+            print("sequence {} needs retry; current GET response text:\n{}\n".format(seq_id, GET_result.text))
+            return None
+
+        doc = fetch_payload(payload, json_decoding_error_handler=error_handler)
+        return doc['results'].pop() if doc['results'] else unknown
+
 
     def not_seen_so_far(ref_seq_id):
         return ref_seq_id not in sink
@@ -266,7 +306,7 @@ def oeis_graph(seq_id, depth=2, workers=20):
         pool = ThreadPool(workers) # Make the Pool of workers
 
         # Open the urls in their own threads and return the results
-        results = pool.map(fetch, sequences)
+        results = pool.map(lambda seq_id: (seq_id, fetch(seq_id)), sequences)
 
         #close the pool and wait for the work to finish
         pool.close()
@@ -280,6 +320,8 @@ def oeis_graph(seq_id, depth=2, workers=20):
             if not result:
                 retry.add(seq_id)
                 continue
+
+            if result is unknown: continue
 
             # since `recursion` is called if `seq_id` hasn't been fetched
             sink.update({int(result['number']): result}) 
@@ -298,6 +340,9 @@ def oeis_graph(seq_id, depth=2, workers=20):
         
     recursion({seq_id}, step=0)
     
+    for process in post_processing:
+        sink = process(sink)
+
     return sink
     
 
@@ -308,21 +353,6 @@ def load_graph(filename, predicate=lambda k,v: True):
         graph = {int(k):v for k, v in json.load(f).items()}
         return {k:v for k,v in adjust_crossreferences(graph).items() if predicate(k,v)}
 
-def adjust_crossreferences(graph):
-
-    for k, v in graph.items():
-
-        xrefs = cross_references(v['xref']) if 'xref' in v else set()
-        v['xref_as_set'] = {xr for xr in xrefs if xr in graph} 
-
-        for ref in v['xref_as_set']:
-
-            referenced = graph[ref]
-            if 'referees' not in referenced: referenced['referees'] = set()
-            referenced['referees'].add(k)
-
-    return graph
-    
 
 def fetch_graph(filename, **kwds): 
 
@@ -332,16 +362,11 @@ def fetch_graph(filename, **kwds):
 
     start_timestamp = time.time()
 
-    graph = oeis_graph(**kwds)
+    graph = oeis_graph(post_processing=[], **kwds)
 
     end_timestamp = time.time()
 
     print("Elapsed time: {:3} secs.".format(end_timestamp - start_timestamp))
-
-    #print(graph)
-
-    #for k,v in graph.items():
-        #del v['xref_as_set'] # the json encoder doesn't handle `set` objects
 
     save(graph)
 
