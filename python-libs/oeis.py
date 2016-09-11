@@ -255,6 +255,7 @@ def fetch_payload(  payload,
     try:
         doc = GET_result.json()
         if not doc['results']: doc['results'] = []
+        print('*', end='')
     except Exception as e:
         return json_decoding_error_handler(GET_result, e)
 
@@ -298,10 +299,10 @@ def oeis_graph(seq_id, depth=2, workers=20, post_processing=[adjust_crossreferen
     def recursion(sequences, step):
         
         if step > depth: 
-            print("Horizon reached.")
+            print("\nHorizon reached.")
             return
 
-        print("Fringe at distance {}, {} sequences to fetch.".format(step, len(sequences)))
+        print("\nFringe at distance {}, {} sequences to fetch.".format(step, len(sequences)))
 
         pool = ThreadPool(workers) # Make the Pool of workers
 
