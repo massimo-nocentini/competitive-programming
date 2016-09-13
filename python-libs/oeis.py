@@ -1,7 +1,9 @@
 
-from itertools import count
-
 import threading, re, json, time
+import networkx as nx
+
+from itertools import count
+from collections import defaultdict
 from multiprocessing.dummy import Pool as ThreadPool
 from requests import get
 
@@ -57,11 +59,16 @@ class keyword_builder:
         keyword = "\n_Keywords_: `{}`".format(doc['keyword'])
         return keyword
         
-class ListData:
+class AbstractData:
+
+    def __init__(self, upper_limit):
+        self.upper_limit = upper_limit
+
+class ListData(AbstractData):
 
     def __call__(self, caller, doc):
 
-        seq = doc['data'].split(',')[:caller.upper_limit]
+        seq = doc['data'].split(',')[:self.upper_limit]
         array_template = r'''
 $$
 \begin{env}{{c|{nel}}}
@@ -79,12 +86,12 @@ $$
         return array_template
         
 
-class TableData:
+class TableData(AbstractData):
 
     def __call__(self, caller, doc):
 
-        seq = doc['data'].split(',')#[:caller.upper_limit]
-        n, k = caller.upper_limit
+        seq = doc['data'].split(',')
+        n, k = self.upper_limit
 
         rows = r'\\'.join([' & '.join([str(i)] + [seq[index] if j <= i else '' for j in range(k) for index in [i*(i+1)//2 + j] if index < len(seq)]) for i in range(n)])
 
@@ -105,8 +112,7 @@ $$
 
 class data_builder:
     
-    def __init__(self, upper_limit, representation):
-        self.upper_limit = upper_limit
+    def __init__(self, representation):
         self.representation = representation
     
     def __call__(self, doc):
@@ -177,17 +183,19 @@ def pretty_print(doc,
                  data_only=False,
                  head=None,
                  keyword=None, 
-                 data_upper_limit=20,
-                 data_representation=ListData(), 
+                 data_representation=None, 
                  comment=lambda i, c: True,
                  formula=lambda i, c: True,
                  xref=lambda i, c: True,
                  link=lambda i, c: "broken link" not in c,
                  reference=lambda i, c: True,):
     
+    if not data_representation:
+        data_representation = TableData(upper_limit=(10,10)) if 'tabl' in doc['keyword'] else ListData(upper_limit=15)
+
     builders = [head_builder(), 
                 keyword_builder(), 
-                data_builder(upper_limit=data_upper_limit, representation=data_representation)]
+                data_builder(representation=data_representation)]
     
     if not data_only:
         builders.extend([comment_builder(filter_pred=comment), 
@@ -209,13 +217,13 @@ def oeis_search(id=None, seq=None, query="", start=0, table=False, xref=[], **kw
     
     query_components = [] # a list of query components, as strings to be joined later
 
-    if id: query_components .append("id:A{:06d}".format(id))
-    elif seq: query_components .append((", " if isinstance(seq, list) else " ").join(map(str,seq)))
+    if id: query_components.append("id:A{:06d}".format(id))
+    elif seq: query_components.append((", " if isinstance(seq, list) else " ").join(map(str,seq)))
     else: query_components.append(query) 
 
-    if table: query_components .append("keyword:tabl")
-    for r in xref: query_components .append("xref:A{:06d}".format(id))
-    for k,v in kwds.items(): query_components .append("{}:{}".format(k,v))
+    if table: query_components.append("keyword:tabl")
+    for r in xref: query_components.append("xref:A{:06d}".format(id))
+    for k,v in kwds.items(): query_components.append("{}:{}".format(k,v))
 
     def connection_error(exc):
         return lambda **pp_kwds: Markdown("<hr>__Connection Error__<hr>")
@@ -347,12 +355,12 @@ def oeis_graph(seq_id, depth=2, workers=20, post_processing=[adjust_crossreferen
     return sink
     
 
-def load_graph(filename, predicate=lambda k,v: True):
+def load_graph(filename):
 
     with open(filename, 'r') as f:
 
-        graph = {int(k):v for k, v in json.load(f).items()}
-        return {k:v for k,v in adjust_crossreferences(graph).items() if predicate(k,v)}
+        graph = {int(k):v for k, v in adjust_crossreferences(json.load(f)).items()}
+        return adjust_crossreferences(graph)
 
 
 def fetch_graph(filename, **kwds): 
@@ -372,3 +380,60 @@ def fetch_graph(filename, **kwds):
     save(graph)
 
     print("Graph saved.")
+
+#________________________________________________________________________
+
+def make_nx_graph(graph, summary=True, digraph=True, 
+                  node_remp=lambda n, G: False, 
+                  edge_remp=lambda u, v, G: False):
+
+    G = nx.DiGraph() if digraph else nx.Graph()
+
+    for seq_id, v in graph.items():
+        for ref_seq_id in v['xref_as_set']:
+            G.add_edge(seq_id, ref_seq_id)
+
+    G.remove_nodes_from([n for n in G.nodes() if node_remp(n, G)])
+    G.remove_edges_from([(u, v) for u, v in G.edges() if edge_remp(u, v, G)])
+            
+    if summary:
+        print("A graph with {} nodes and {} edges will be drawn".format(len(G.nodes()),len(G.edges())))
+        
+    return G
+
+def draw_nx_graph(G, nodes_colors={}, filename=None, nodes_labels={}):
+    
+    import matplotlib.pyplot as plt
+
+    if 'draw' not in nodes_labels: nodes_labels['draw'] = True
+    
+    nc = defaultdict(lambda: 'gray')
+    nc.update(nodes_colors)
+    
+    pos=nx.spring_layout(G)#, iterations=200) # positions for all nodes
+
+    degrees = G.in_degree() if G.is_directed() else G.degree()
+    for seq_id in G.nodes():
+        nx.draw_networkx_nodes(G, pos, nodelist=[seq_id], 
+                               node_color=nc[seq_id],
+                               node_size=degrees[seq_id]*10, 
+                               alpha=0.8)
+
+    """
+    nx.draw_networkx_nodes(G,pos,
+                           nodelist=set(G.nodes())-set(favorite_nodes.keys()),
+                           node_color='r',
+                           node_size=500,
+                       alpha=0.8)
+    """
+    
+    nx.draw_networkx_edges(G,pos,width=1.0,alpha=0.5)
+    
+    if nodes_labels['draw']:
+        ls = {n:nodes_labels[n] if n in nodes_labels else (str(n) if G.in_degree()[n] > 10 else "") 
+              for n in G.nodes()}
+        nx.draw_networkx_labels(G,pos,ls,font_size=16)
+
+    plt.axis('off')
+    if filename: plt.savefig(filename) # save as png
+    else: plt.show()
