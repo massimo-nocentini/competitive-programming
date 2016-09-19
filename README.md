@@ -56,6 +56,7 @@ them in Jupyter notebooks:
    - [gray codes][gray]
    - [backtracking][backtrack]
    - [recursively-defined structures][recursively]
+   - [dynamic programming][dp]
    - [Conway's Game of Life][gamelife]
    - [OEIS integration][oeis-interaction]
    - [OEIS mining][oeis-mining]
@@ -65,6 +66,7 @@ them in Jupyter notebooks:
 [gray]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/graycodes.ipynb?flush_cache=true
 [backtrack]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/backtrack.ipynb?flush_cache=true
 [recursively]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/recursive-structures.ipynb?flush_cache=true
+[dp]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/dynamic-programming.ipynb?flush_cache=true
 [gamelife]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/gamelife.ipynb?flush_cache=true
 [oeis-interaction]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/oeis-interaction.ipynb?flush_cache=true
 [oeis-mining]:http://nbviewer.jupyter.org/github/massimo-nocentini/competitive-programming/blob/master/tutorials/oeis-mining.ipynb?flush_cache=true
