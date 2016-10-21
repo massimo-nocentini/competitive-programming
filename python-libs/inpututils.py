@@ -57,11 +57,22 @@ def forever_read_until_event(doer, reader=lambda: stdin_input(), event=StopItera
 
 #________________________________________________________________________
 
-def python_code(*objs, markdown=True):
+def python_code(*objs, markdown=True, remove_comments=False, docstring_delimiter=r'"""'):
 
     import inspect
 
-    src = "\n".join(inspect.getsource(obj) for obj in objs)
+    def cleaner(obj):
+        src = inspect.getsource(obj)
+        if remove_comments and inspect.getdoc(obj):
+            # the followoing could be done more clearly using regex, but for now...
+            start = src.index(docstring_delimiter, 0)
+            end = src.index(docstring_delimiter, start+len(docstring_delimiter))
+            removing_src = list(src)
+            del removing_src[start:end+len(docstring_delimiter)]
+            src = "".join(removing_src)
+        return src
+
+    src = "\n".join(map(cleaner, objs))
     
     if markdown:
         from IPython.display import Markdown

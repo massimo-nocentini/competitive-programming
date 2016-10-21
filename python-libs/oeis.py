@@ -49,7 +49,7 @@ def merge_splitted_text(lst):
 class head_builder:
 
     def __call__(self, doc):
-        head = r"<div align='center'><b><a href='http://oeis.org/A{:06d}'>A{:06d}</a></b>: <i>{}</i><br></div>".format(
+        head = r"<div align='center'><b><a href='http://oeis.org/A{:06d}'>A{:06d}</a></b>: {}<br></div>".format(
                 doc['number'], doc['number'], doc['name'], ) + "\n\nby {}".format(doc['author'])
         return head
         
@@ -183,6 +183,7 @@ def pretty_print(doc,
                  data_only=False,
                  head=None,
                  keyword=None, 
+                 preamble=True,
                  data_representation=None, 
                  comment=lambda i, c: True,
                  formula=lambda i, c: True,
@@ -195,7 +196,7 @@ def pretty_print(doc,
 
     builders = [head_builder(), 
                 keyword_builder(), 
-                data_builder(representation=data_representation)]
+                data_builder(representation=data_representation)] if preamble else []
     
     if not data_only:
         builders.extend([comment_builder(filter_pred=comment), 
@@ -208,7 +209,7 @@ def pretty_print(doc,
     return descr
 
 
-def oeis_search(id=None, seq=None, query="", start=0, table=False, xref=[], **kwds):
+def oeis_search(id=None, seq=None, query="", start=0, table=False, xref=[], only_possible_matchings=False, **kwds):
 
     # the following imports are too specific to appear at the top of the module.
     from requests import get
@@ -240,9 +241,23 @@ def oeis_search(id=None, seq=None, query="", start=0, table=False, xref=[], **kw
 
         return searchable
 
+    def possible_matchings(doc, GET_result):
+
+        def searchable(term_src, no_matchings="no matchings found."):
+
+            matches = [r"<a href='http://oeis.org/A{:06d}'>A{:06d}</a>".format(doc['number'], doc['number']) 
+                       for result in doc['results']]
+            
+            if not matches: matches = None
+
+            return r'<tr><td style="white-space:nowrap;">$${math}$$</td><td>{seqs}</td></tr>'.format(math=term_src, seqs=matches)
+
+        return searchable
+
     return fetch_payload(payload={"fmt": "json", "start": start, "q": ' '.join(query_components)},  
-                         then=make_searchable,
+                         then=possible_matchings if only_possible_matchings else make_searchable,
                          network_error_handler=connection_error,
+                         progress_indicator=kwds.get('progress_indicator', '*'),
                          json_decoding_error_handler=json_error)
 
 
@@ -253,6 +268,7 @@ def cross_references(xref):
 def fetch_payload(  payload, 
                     then=None,
                     network_error_handler=lambda exc: None, 
+                    progress_indicator='*',
                     json_decoding_error_handler=lambda GET_result, exc: None):
 
     try: 
@@ -263,7 +279,7 @@ def fetch_payload(  payload,
     try:
         doc = GET_result.json()
         if not doc['results']: doc['results'] = []
-        print('*', end='')
+        print(progress_indicator if progress_indicator else '', end='')
     except Exception as e:
         return json_decoding_error_handler(GET_result, e)
 
