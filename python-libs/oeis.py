@@ -215,7 +215,8 @@ def oeis_search(id=None, seq=None, query="", start=0, table=False, xref=[], only
     from requests import get
     from IPython.display import Markdown
 
-    
+    progress_indicator=kwds.pop('progress_indicator', '*') 
+
     query_components = [] # a list of query components, as strings to be joined later
 
     if id: query_components.append("id:A{:06d}".format(id))
@@ -245,19 +246,19 @@ def oeis_search(id=None, seq=None, query="", start=0, table=False, xref=[], only
 
         def searchable(term_src, no_matchings="no matchings found."):
 
-            matches = [r"<a href='http://oeis.org/A{:06d}'>A{:06d}</a>".format(doc['number'], doc['number']) 
+            matches = [r"<a href='http://oeis.org/A{:06d}'>A{:06d}</a>".format(result['number'], result['number']) 
                        for result in doc['results']]
             
-            if not matches: matches = None
+            if not matches: matches = []
 
-            return r'<tr><td style="white-space:nowrap;">$${math}$$</td><td>{seqs}</td></tr>'.format(math=term_src, seqs=matches)
+            return r'<tr><td style="white-space:nowrap;">$${math}$$</td><td>{seqs}</td></tr>'.format(math=term_src, seqs=", ".join(matches))
 
         return searchable
 
     return fetch_payload(payload={"fmt": "json", "start": start, "q": ' '.join(query_components)},  
                          then=possible_matchings if only_possible_matchings else make_searchable,
                          network_error_handler=connection_error,
-                         progress_indicator=kwds.get('progress_indicator', '*'),
+                         progress_indicator=progress_indicator,
                          json_decoding_error_handler=json_error)
 
 
