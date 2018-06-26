@@ -233,7 +233,7 @@ def low_bit_and_clear(S):
     ========
 
     >>> S = 0b101010
-    >>> j, R = (low_bit_and_clear(S))
+    >>> j, R = low_bit_and_clear(S)
     >>> j
     1
     >>> bin(R)
@@ -263,9 +263,31 @@ def toggle_bits(S, *positions):
     return S
 
 def low_bit(S): 
+    """
+    Returns the position of the first bit 1 from the least significant part.
+
+    >>> low_bit(0b100101)
+    0
+    >>> low_bit(0b100100)
+    2
+    >>> low_bit(1 << 5)
+    5
+
+    """
     return (S & (-S)).bit_length() - 1
 
 def set_all(n):
+    """
+    Returns a new set composed by `n` elements.
+
+    Examples
+    ========
+
+    Build a set with 10 elements within it:
+    >>> bin(set_all(10))
+    '0b1111111111'
+
+    """
     return (1 << n) - 1
 
 def modulo(S, N):
